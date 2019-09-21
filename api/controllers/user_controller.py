@@ -9,6 +9,7 @@ from flask_jwt_extended import (
     get_jwt_claims
 )
 import jwt
+from datetime import datetime, timedelta
 from decouple import config
 validate = UserValidate()
 class UserController:
@@ -100,7 +101,8 @@ class UserController:
             'username': data['username'],
             'role': role
         }
-        access_token = create_access_token(identity=identity)
+        expires=timedelta(hours=23)
+        access_token = create_access_token(identity=identity, expires_delta=expires)
         return jsonify(access_token=access_token), 200
     
     def register_user_controller(self, data):
