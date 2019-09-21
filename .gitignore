@@ -2,4 +2,5 @@ venv/
 .vscode
 api/__pycache__/__init__.cpython-37.pyc
 .env
-__pycache__/
+__pycache__/*
+**/__pycache__/**
