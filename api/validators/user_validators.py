@@ -36,8 +36,11 @@ class UserValidate:
             return "passwords dont match"
 
     def validate_user_role(self, data):
-        if data['role'] != 'Admin' and data['role'] != 'Attendant':
-            return "Role must be either Admin or Attendant"
+        if data['role'] != 'Admin' and \
+           data['role'] != 'Loader' and \
+           data['role'] != 'Supplier' and \
+           data['role'] != 'Recipient':
+            return "Role must be either Admin, Loader, Supplier, Recipient"
     
     def validate_user(self, data):
         if isinstance(self.validate_user_fields(data), str):
@@ -49,3 +52,15 @@ class UserValidate:
         if isinstance(self.validate_user_role(data), str):
             return self.validate_user_role(data)
         return "is_valid"
+
+    def validate_login(self, data):
+        if len(data.keys()) != 2:
+            return "Only username and password for login"
+        if "username" not in data.keys():
+            return "missing username"
+        if "password" not in data.keys():
+            return "missing password"
+        if data["username"] == "" or data["password"]== "":
+            return "Input username or password"
+        else:
+            return "valid login fields"

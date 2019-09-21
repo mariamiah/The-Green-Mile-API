@@ -1,6 +1,16 @@
 from database_handler import DbConn
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from api.validators.user_validators import UserValidate
+from flask import request, jsonify    
+from werkzeug.security import check_password_hash
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt_identity,
+    get_jwt_claims
+)
+import jwt
+from decouple import config
+validate = UserValidate()
 class UserController:
     """
     This interfaces with the database
@@ -30,6 +40,29 @@ class UserController:
         if row:
             return True
   
+    def check_if_user_exists(self, data):
+        """
+        Checks if the user exists in the database to authorize login
+
+        """
+        sql = """SELECT * from users where username = '{}'"""
+        self.cur.execute(sql.format(data['username']))
+        row = self.cur.fetchall()
+        if row:
+            return True
+    
+    def check_password(self, data):
+        """
+        Checks the password hash
+        """
+        data = request.get_json()
+        sql = """SELECT password FROM users WHERE username='{}'"""
+        self.cur.execute(sql.format(data['username']))
+        row = self.cur.fetchone()
+        if check_password_hash(row[0], data['password']):
+            return True
+        return False
+    
     def create_user(self, data):
         """
         Creates a user
@@ -42,3 +75,54 @@ class UserController:
                                 hashed_password,
                                 data['role'])
         self.cur.execute(sql_command)
+    
+    def get_role(self):
+        data = request.get_json()
+        sql = """SELECT role FROM users WHERE username = '{}'"""
+        self.cur.execute(sql.format(data['username']))
+        role = self.cur.fetchone()
+        if role:
+            return role
+    
+    def check_user_permission(self, token):
+        decoded_token = jwt.decode(token, config('JWT_SECRET_KEY'))
+        role = decoded_token['identity']['role']
+        if role[0] == 'Admin':
+            return True
+    
+    def generate_login_token(self, data):
+        """
+        Assigns access token to user
+        """
+        data = request.get_json()
+        role = self.get_role()
+        identity = {
+            'username': data['username'],
+            'role': role
+        }
+        access_token = create_access_token(identity=identity)
+        return jsonify(access_token=access_token), 200
+    
+    def register_user_controller(self, data):
+        is_valid = validate.validate_user(data)
+        if is_valid == "is_valid":      
+            if not self.check_email_exists(data['email']):
+                if not self.check_if_username_exists(data['username']):
+                    self.create_user(data)
+                    return jsonify({"message": "user successfully created"}), 201
+                return jsonify({"message":"Username already exists"}), 400
+            return jsonify({"message":"Email already exists"}), 400      
+        return jsonify({"message": is_valid}), 400
+    
+
+    def login_controller(self, data):
+        if not request.is_json:
+            return jsonify({"msg": "Missing JSON in request"}), 400
+        login_valid = validate.validate_login(data)
+        if login_valid == "valid login fields":
+            if self.check_if_user_exists(data):
+                if self.check_password(data):
+                    return self.generate_login_token(data)
+                return jsonify({"message":"Enter correct password"}), 400
+            return jsonify({"message":"Username doesnot exist, please register"}), 400
+        return jsonify({"message":login_valid})
