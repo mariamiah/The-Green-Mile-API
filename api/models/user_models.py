@@ -1,5 +1,3 @@
-from flask import jsonify, request
-
 class User:
     """
     This class describes the attributes of a user
