@@ -11,5 +11,5 @@ class Package:
         self.destination_address = kwargs.get('destination_address')
         self.supplier_name = kwargs.get('supplier_name')
         self.recipient_name = kwargs.get('recipient_name')
+        self.delivery_date = kwargs.get('delivery_date'),
         self.invoice_number = kwargs.get('invoice_number')
-

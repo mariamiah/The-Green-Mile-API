@@ -26,21 +26,21 @@ class DbConn:
             username VARCHAR(100) NOT NULL UNIQUE,
             password VARCHAR(100) NOT NULL,
             role VARCHAR(100) NOT NULL); ''')
-    
+
     def create_package_types_table(self):
         """ Creates the package types table """
         self.cur.execute('''CREATE TABLE IF NOT EXISTS package_type
              (package_type_id SERIAL PRIMARY KEY NOT NULL,
               package_type_name VARCHAR(250) NOT NULL UNIQUE
-            );''') 
-    
+            );''')
+
     def create_loading_types_table(self):
         """ Creates the loading types table """
         self.cur.execute(''' CREATE TABLE IF NOT EXISTS loading_type
         (loading_type_id SERIAL PRIMARY KEY NOT NULL,
          loading_type_name VARCHAR(100) NOT NULL UNIQUE
         );''')
-    
+
     def create_status_table(self):
         """ Creates the status table """
         self.cur.execute(''' CREATE TABLE IF NOT EXISTS status_table
@@ -53,18 +53,20 @@ class DbConn:
         (invoice_id SERIAL PRIMARY KEY NOT NULL,
         invoice_number VARCHAR(100) NOT NULL UNIQUE,
         invoice_status VARCHAR(100) REFERENCES status_table(status_name) ON\
-               DELETE CASCADE     
+               DELETE CASCADE
          );''')
-    
+
     def create_packages_table(self):
         """ A function that creates the packages table """
         self.cur.execute('''CREATE TABLE IF NOT EXISTS packages
         (package_id SERIAL PRIMARY KEY NOT NULL,
          package_name VARCHAR(250) NOT NULL,
-         package_type_name VARCHAR(100) REFERENCES package_type(package_type_name) ON\
+         package_type_name VARCHAR(100)\
+         REFERENCES package_type(package_type_name) ON\
                       DELETE CASCADE,
          delivery_description VARCHAR(500) NOT NULL,
-         loading_type_name VARCHAR(100) REFERENCES loading_type(loading_type_name) ON\
+         loading_type_name VARCHAR(100)\
+         REFERENCES loading_type(loading_type_name) ON\
                       DELETE CASCADE,
          source_address VARCHAR(250) NOT NULL,
          destination_address VARCHAR(250) NOT NULL,
@@ -73,6 +75,8 @@ class DbConn:
                      DELETE CASCADE,
          invoice_number VARCHAR REFERENCES invoices(invoice_number) ON\
                      DELETE CASCADE,
+         date_created DATE NOT NULL DEFAULT CURRENT_DATE,
+         delivery_date DATE NOT NULL,
          delivery_status VARCHAR(100) REFERENCES status_table(status_name) ON\
                     DELETE CASCADE
          );''')
