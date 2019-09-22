@@ -8,6 +8,7 @@ user = Blueprint('user', __name__)
 user_controller = UserController()
 helper_controller = HelperController()
 
+
 @user.route('/api/v1/auth/signup', methods=['POST'])
 @jwt_required
 def register_user():
@@ -16,10 +17,12 @@ def register_user():
     """
     data = request.get_json()
     token = helper_controller.get_token_from_request()
-    if user_controller.check_user_permission(token)== 'Admin':
+    if user_controller.check_user_permission(token) == 'Admin':
         return user_controller.register_user_controller(data)
-    return jsonify({"message": "No permissions to add a user, should be admin"}), 401
-    
+    return jsonify({"message":
+                    "No permissions to add a user, should be admin"}), 401
+
+
 @user.route('/api/v1/auth/login', methods=['POST'])
 def login():
     """

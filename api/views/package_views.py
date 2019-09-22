@@ -8,6 +8,7 @@ package = Blueprint('package', __name__)
 package_controller = PackageController()
 user_controller = UserController()
 helper_controller = HelperController()
+
 @package.route('/api/v1/packages', methods=['POST'])
 @jwt_required
 def register_package():
@@ -17,8 +18,7 @@ def register_package():
     data = request.get_json()
     token = helper_controller.get_token_from_request()
     if user_controller.check_user_permission(token) == 'Supplier' or\
-        user_controller.check_user_permission(token) == 'Admin':
+       user_controller.check_user_permission(token) == 'Admin':
         return package_controller.register_package(data)
-    return jsonify({"message": "No permissions to add a package, should be supplier or admin"}), 401
-    
-
+    return jsonify({"message":
+                    "No permissions to add a package, should be supplier or admin"}), 401

@@ -10,6 +10,7 @@ app.register_blueprint(package)
 app.config['JWT_SECRET_KEY'] = config('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 
+
 @app.route('/')
 def index():
     return jsonify({"message": "welcome to the green mile application"})
