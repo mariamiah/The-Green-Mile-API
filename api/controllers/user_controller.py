@@ -2,19 +2,17 @@ from database_handler import DbConn
 from werkzeug.security import generate_password_hash, check_password_hash
 from api.validators.user_validators import UserValidate
 from flask import request, jsonify    
-from werkzeug.security import check_password_hash
 from flask_jwt_extended import (
     create_access_token,
     get_jwt_identity,
     get_jwt_claims
 )
-import jwt
 from datetime import datetime, timedelta
 from decouple import config
 validate = UserValidate()
 class UserController:
     """
-    This interfaces with the database
+    This user controller interfaces with the database
     """
     def __init__(self):
         conn = DbConn()
@@ -86,10 +84,12 @@ class UserController:
             return role
     
     def check_user_permission(self, token):
-        decoded_token = jwt.decode(token, config('JWT_SECRET_KEY'))
-        role = decoded_token['identity']['role']
-        if role[0] == 'Admin':
-            return True
+        identity = get_jwt_identity()
+        fetched_role = identity['role']
+        roles = ['Admin', 'Supplier', 'Recipient', 'Loader']
+        for role in roles:
+            if role == fetched_role[0]:
+                return role       
     
     def generate_login_token(self, data):
         """
@@ -116,7 +116,6 @@ class UserController:
             return jsonify({"message":"Email already exists"}), 400      
         return jsonify({"message": is_valid}), 400
     
-
     def login_controller(self, data):
         if not request.is_json:
             return jsonify({"msg": "Missing JSON in request"}), 400
