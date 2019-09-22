@@ -68,14 +68,14 @@ class DbConn:
          loading_type_name VARCHAR(100)\
          REFERENCES loading_type(loading_type_name) ON\
                       DELETE CASCADE,
-         source_address VARCHAR(250) NOT NULL,
-         destination_address VARCHAR(250) NOT NULL,
+         hub_address VARCHAR(250) NOT NULL,
+         recipient_address VARCHAR(250) NOT NULL,
          supplier_name VARCHAR(250) NOT NULL,
          recipient_name VARCHAR(255) REFERENCES users(username) ON\
                      DELETE CASCADE,
          invoice_number VARCHAR REFERENCES invoices(invoice_number) ON\
                      DELETE CASCADE,
-         date_created DATE NOT NULL DEFAULT CURRENT_DATE,
+         date_registered DATE NOT NULL DEFAULT CURRENT_DATE,
          delivery_date DATE NOT NULL,
          delivery_status VARCHAR(100) REFERENCES status_table(status_name) ON\
                     DELETE CASCADE

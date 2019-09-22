@@ -19,10 +19,10 @@ class PackageValidate:
             return "Invalid Key added"
 
     def validate_packages_regexes(self, data):
-        package_fields = ['package_name', 'source_address',
-                          'destination_address']
+        package_fields = ['package_name', 'hub_address',
+                          'recipient_address']
         for field in package_fields:
-            if not re.match(r"([a-zA-Z_0-9]*$)", data[field]):
+            if not re.match(r"([a-zA-Z_0-9 ]*$)", data[field]):
                 return "Only alphanumerics allowed in {}".format(field)
             if re.match(r"([0-9])", data[field]):
                 return "numbers only not allowed in {}".format(field)

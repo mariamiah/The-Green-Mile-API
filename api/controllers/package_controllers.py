@@ -25,13 +25,13 @@ class PackageController:
         conn.create_invoice_table()
         conn.create_packages_table()
 
-    def get_supplier_name(self, token):
+    def get_user_name(self, token):
         """
         Obtain the supplier name from the token
         """
         identity = get_jwt_identity()
-        supplier_name = identity['username']
-        return supplier_name
+        user_name = identity['username']
+        return user_name
 
     def execute_sql(self, data):
         tables = ['package_type', 'loading_type', 'invoices', 'status_table']
@@ -53,10 +53,10 @@ class PackageController:
         Creates package details in the database
         """
         token = helper_controller.get_token_from_request()
-        supplier_name = self.get_supplier_name(token)
+        supplier_name = self.get_user_name(token)
         sql = """INSERT INTO packages(package_name, package_type_name,
                                       delivery_description, loading_type_name,
-                                      source_address, destination_address,
+                                      hub_address, recipient_address,
                                       supplier_name, recipient_name,
                                       invoice_number, delivery_date,
                                        delivery_status) VALUES ('{}', '{}',
@@ -67,8 +67,8 @@ class PackageController:
         sql_command = sql.format(data['package_name'], data['package_type'],
                                  data['delivery_description'],
                                  data['loading_type_name'],
-                                 data['source_address'],
-                                 data['destination_address'], supplier_name,
+                                 data['hub_address'],
+                                 data['recipient_address'], supplier_name,
                                  data['recipient_name'],
                                  data['invoice_number'],
                                  data['delivery_date'],
@@ -96,3 +96,43 @@ class PackageController:
                      "Either user doesnot exist or not Recipient"}), 404
             return jsonify({"message": self.execute_sql(data)}), 404
         return jsonify({"message": package_valid})
+
+    def return_package_fields(self, rows):
+        packages = []
+        for row in rows:
+            packages.append({
+                "package_id": row[0],
+                "package_name": row[1],
+                "package_type": row[2],
+                "delivery_description": row[3],
+                "loading_type_name": row[4],
+                "hub_address": row[5],
+                "recipient_address": row[6],
+                "supplier_name": row[7],
+                "recipient_name": row[8],
+                "invoice_number": row[9],
+                "date_registered": row[10],
+                "delivery_date": row[11],
+                "delivery_status": row[12]
+            })
+        return packages
+
+    def fetch_packages(self):
+        sql = """ SELECT * FROM packages"""
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+        return self.return_package_fields(rows)
+
+    def fetch_single_packages(self, username):
+        rows = self.cur.fetchall()
+        return self.return_package_fields(rows)
+
+    def fetch_user_packages(self, username):
+        sql = """ SELECT * FROM packages WHERE recipient_name = '{}'"""
+        self.cur.execute(sql.format(username))
+        return self.fetch_single_packages(username)
+
+    def fetch_supplier_packages(self, username):
+        sql = """ SELECT * FROM packages WHERE supplier_name = '{}'"""
+        self.cur.execute(sql.format(username))
+        return self.fetch_single_packages(username)
