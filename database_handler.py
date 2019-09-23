@@ -81,6 +81,12 @@ class DbConn:
                     DELETE CASCADE
          );''')
 
+    def drop_tables(self, table_name):
+        """ Drops the tables that exist in the database"""
+        sql = """ DROP TABLE {} CASCADE; """
+        self.cur.execute(sql.format(table_name))
+        print("Table '{}' successfully dropped".format(table_name))
+
     def close_DB(self):
         self.conn.commit()
         self.conn.close()

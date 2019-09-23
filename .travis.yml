@@ -1,0 +1,23 @@
+language: python
+python:
+  - "3.6"
+services:
+  - postgresql
+
+env:
+  global:
+    - APP_SETTINGS ='testing'
+
+install:
+  - "pip install -r requirements.txt"
+  - "pip install coveralls"
+
+before_script:
+  - "psql -c 'create database greenmile;' -U postgres"
+  - "psql -c 'create database greenmile_testdb;' -U postgres"
+  
+script:
+  - nosetests --with-coverage --cover-package=api && coverage report
+
+after_success:
+  - coveralls
