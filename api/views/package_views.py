@@ -84,3 +84,16 @@ def fetch_single_package(id):
             return jsonify({"package": single_package}), 200 
         return jsonify({"message": "Package doesnot exist"}), 404
     return jsonify({"message": "Permission denied, should be Admin"}), 401
+
+
+@package.route('/api/v1/packages/packagetype', methods=['POST'])
+@jwt_required
+def create_package_type():
+    """
+    Creates the package type in the package_type_table
+    """
+    data = request.get_json()
+    token = helper_controller.get_token_from_request()
+    if user_controller.check_user_permission(token) == 'Admin':
+        return package_controller.create_package_type_name(data)
+    return jsonify({"message": "Only Admins can create a package type"}), 401

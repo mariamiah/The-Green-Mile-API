@@ -159,3 +159,23 @@ class PackageController:
                 "delivery_status": row[12]
             })
         return package
+    
+    def check_if_package_type_exists(self,data):
+        sql = """SELECT * FROM package_type WHERE package_type_name = '{}'"""
+        self.cur.execute(sql.format(data['package_type_name']))
+        row = self.cur.fetchone()
+        if row:
+            return True
+    
+    def create_package_type(self, data):
+        sql = """INSERT INTO package_type(package_type_name)VALUES('{}')"""
+        self.cur.execute(sql.format(data['package_type_name']))
+
+    def create_package_type_name(self, data):
+        is_valid = package_validate.validate_package_type(data)
+        if is_valid == "valid package type":
+            if not self.check_if_package_type_exists(data):
+                self.create_package_type(data)
+                return jsonify({"message": "Package type succesfully created"}), 201
+            return jsonify({"message": "Package already exists, try another"}), 400
+        return jsonify({"message": is_valid}), 400
