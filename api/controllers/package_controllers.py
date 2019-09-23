@@ -136,3 +136,26 @@ class PackageController:
         sql = """ SELECT * FROM packages WHERE supplier_name = '{}'"""
         self.cur.execute(sql.format(username))
         return self.fetch_single_packages(username)
+
+    def fetch_single_package(self, id):
+        package = []
+        sql = """ SELECT * FROM packages WHERE package_id = '{}'"""
+        self.cur.execute(sql.format(id))
+        row = self.cur.fetchone()
+        if row:
+            package.append({
+                "package_id": row[0],
+                "package_name": row[1],
+                "package_type": row[2],
+                "delivery_description": row[3],
+                "loading_type_name": row[4],
+                "hub_address": row[5],
+                "recipient_address": row[6],
+                "supplier_name": row[7],
+                "recipient_name": row[8],
+                "invoice_number": row[9],
+                "date_registered": row[10],
+                "delivery_date": row[11],
+                "delivery_status": row[12]
+            })
+        return package

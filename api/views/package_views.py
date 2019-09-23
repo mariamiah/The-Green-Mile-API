@@ -69,3 +69,18 @@ def read_supplier_packages():
             return jsonify({"message": supplier_packages})
         return jsonify({"message": "No created packages yet"}), 200
     return jsonify({"message": "Only accessed by suppliers"}), 401
+
+
+@package.route('/api/v1/packages/<int:id>', methods=['GET'])
+@jwt_required
+def fetch_single_package(id):
+    """
+    Fetches a single package
+    """
+    token = helper_controller.get_token_from_request()
+    if user_controller.check_user_permission(token) == 'Admin':
+        single_package = package_controller.fetch_single_package(id)
+        if single_package:
+            return jsonify({"package": single_package}), 200 
+        return jsonify({"message": "Package doesnot exist"}), 404
+    return jsonify({"message": "Permission denied, should be Admin"}), 401
