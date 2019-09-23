@@ -1,4 +1,6 @@
 # The-Green-Mile-API
+[![Build Status](https://travis-ci.org/mariamiah/The-Green-Mile-API.svg?branch=develop)](https://travis-ci.org/mariamiah/The-Green-Mile-API)
+
 The Green-Mile is a web application that is meant for use in the door to door delivery of packages.
 
 ## Features
