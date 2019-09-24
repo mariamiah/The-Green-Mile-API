@@ -55,7 +55,7 @@ class PackageValidate:
         if isinstance(self.compare_dates(data), str):
             return self.compare_dates(data)
         return "valid package details"
-    
+
     def validate_package_type(self, data):
         """
         Validates the package type field
@@ -63,3 +63,8 @@ class PackageValidate:
         if data['package_type_name'] == "":
             return "package_type_name cannot be blank"
         return "valid package type"
+
+    def validate_load_type(self, data):
+        if data['loading_type_name'] == "":
+            return "loading_type_name cannot be blank"
+        return "valid load type"

@@ -130,5 +130,5 @@ class UserController:
                     return self.generate_login_token(data)
                 return jsonify({"message": "Enter correct password"}), 400
             return jsonify({"message":
-                            "Username doesnot exist, please register"}), 400
+                            "Username doesnot exist, please register with Admin"}), 400
         return jsonify({"message": login_valid})

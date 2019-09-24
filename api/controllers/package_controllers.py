@@ -160,7 +160,7 @@ class PackageController:
             })
         return package
     
-    def check_if_package_type_exists(self,data):
+    def check_if_package_type_exists(self, data):
         sql = """SELECT * FROM package_type WHERE package_type_name = '{}'"""
         self.cur.execute(sql.format(data['package_type_name']))
         row = self.cur.fetchone()
@@ -179,3 +179,46 @@ class PackageController:
                 return jsonify({"message": "Package type succesfully created"}), 201
             return jsonify({"message": "Package already exists, try another"}), 400
         return jsonify({"message": is_valid}), 400
+    
+    def create_loadingtype(self, data):
+        """
+        Admin adds the loading type to the system
+        """
+        sql = """ INSERT INTO loading_type(loading_type_name) VALUES('{}')"""
+        self.cur.execute(sql.format(data['loading_type_name']))
+    
+    def check_if_load_type_exists(self, data):
+        sql = """SELECT * FROM loading_type WHERE loading_type_name = '{}'"""
+        self.cur.execute(sql.format(data['loading_type_name']))
+        row = self.cur.fetchone()
+        print(row)
+        if row:
+            return True
+
+    def create_load_type_name(self, data):
+        is_valid = package_validate.validate_load_type(data)
+        if is_valid == "valid load type":
+            if not self.check_if_load_type_exists(data):
+                self.create_loadingtype(data)
+                return jsonify({"message": "load type successfully created"}), 201
+            return jsonify({"message": "Load type already exists!"}), 400
+        return jsonify({"message": is_valid}), 400
+
+    def modify_single_package(self, package_id, package_name, package_type, 
+                              recipient_name, loading_type_name):
+        sql = """ UPDATE packages SET package_name='{}', package_type_name='{}',
+                  recipient_name = '{}', loading_type_name='{}' WHERE package_id= '{}'"""
+        self.cur.execute(sql.format(package_name, package_type, recipient_name,
+                                    loading_type_name, package_id))
+
+    def update_single_package(self, id):
+        data = request.get_json()
+        is_valid = package_validate.validate_package(data)
+        if is_valid == "valid package details":
+            self.modify_single_package(id, data['package_name'],
+                                       data['package_type'],
+                                       data['recipient_name'],
+                                       data['loading_type_name'])
+            return jsonify({"message": "package modified successfully"}), 200
+        return jsonify({"message": is_valid}), 400
+

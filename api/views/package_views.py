@@ -97,3 +97,21 @@ def create_package_type():
     if user_controller.check_user_permission(token) == 'Admin':
         return package_controller.create_package_type_name(data)
     return jsonify({"message": "Only Admins can create a package type"}), 401
+
+
+@package.route('/api/v1/packages/loadingtype', methods=['POST'])
+@jwt_required
+def create_loading_type():
+    """
+    Creates a loading type
+    """
+    data = request.get_json()
+    token = helper_controller.get_token_from_request()
+    if user_controller.check_user_permission(token) == 'Admin':
+        return package_controller.create_load_type_name(data)
+    return jsonify({"message": "Only admin can create the load type"}), 401
+
+
+@package.route('/api/v1/packages/<int:id>', methods=['PUT'])
+def modify_package(id):
+    return package_controller.update_single_package(id)
