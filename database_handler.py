@@ -81,6 +81,17 @@ class DbConn:
                     DELETE CASCADE
          );''')
 
+
+    def create_default_admin(self):
+        """Creates a default administrator """
+        hashed_password = generate_password_hash('Administrator1', 'sha256')
+        sql = """INSERT INTO users(email, username,
+                                   password, role) VALUES
+              ('{}', '{}', '{}', '{}')
+              ON CONFLICT(email)
+              DO NOTHING;"""
+        self.cur.execute(sql.format('admin@gmail.com','Admin', hashed_password, 'Admin'))
+    
     def drop_tables(self, table_name):
         """ Drops the tables that exist in the database"""
         sql = """ DROP TABLE {} CASCADE; """
