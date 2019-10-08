@@ -20,6 +20,7 @@ class UserController:
         conn = DbConn()
         self.cur = conn.create_connection()
         conn.create_users_table()
+        conn.create_default_admin()
 
     def check_email_exists(self, email):
         """
