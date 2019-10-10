@@ -1,5 +1,6 @@
 import re
-
+import json
+from flask import request
 
 class UserValidate:
     """This class contains validators for the different inputs"""
@@ -8,6 +9,7 @@ class UserValidate:
         # Validates user fields
         user_fields = ['email', 'password', 'username', 'role',
                        'confirm_password']
+
         if len(data.keys()) != 5:
             return "Wrong number of fields, should be 5"
         try:

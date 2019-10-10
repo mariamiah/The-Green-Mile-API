@@ -23,7 +23,7 @@ class DbConn:
         self.cur.execute('''CREATE TABLE IF NOT EXISTS users
             (user_id  SERIAL PRIMARY KEY  NOT NULL,
             email VARCHAR(250) NOT NULL UNIQUE,
-            username VARCHAR(100) NOT NULL,
+            username VARCHAR(100) NOT NULL UNIQUE,
             password VARCHAR(100) NOT NULL,
             role VARCHAR(100) NOT NULL); ''')
 
