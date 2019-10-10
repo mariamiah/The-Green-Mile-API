@@ -23,7 +23,7 @@ class DbConn:
         self.cur.execute('''CREATE TABLE IF NOT EXISTS users
             (user_id  SERIAL PRIMARY KEY  NOT NULL,
             email VARCHAR(250) NOT NULL UNIQUE,
-            username VARCHAR(100) NOT NULL UNIQUE,
+            username VARCHAR(100) NOT NULL,
             password VARCHAR(100) NOT NULL,
             role VARCHAR(100) NOT NULL); ''')
 
@@ -81,15 +81,15 @@ class DbConn:
                     DELETE CASCADE
          );''')
 
-
     def create_default_admin(self):
         """Creates a default administrator """
         hashed_password = generate_password_hash('Administrator1', 'sha256')
+        
         sql = """INSERT INTO users(email, username,
-                                   password, role) VALUES
-              ('{}', '{}', '{}', '{}')
-              ON CONFLICT(email)
-              DO NOTHING;"""
+                                password, role) VALUES
+            ('{}', '{}', '{}', '{}')
+            ON CONFLICT(email)
+            DO NOTHING;"""
         self.cur.execute(sql.format('admin@gmail.com','Admin', hashed_password, 'Admin'))
     
     def drop_tables(self, table_name):

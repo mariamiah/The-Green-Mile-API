@@ -133,3 +133,5 @@ class UserController:
             return jsonify({"message":
                             "Username doesnot exist, please register with Admin"}), 400
         return jsonify({"message": login_valid})
+
+
