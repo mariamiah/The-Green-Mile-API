@@ -53,7 +53,10 @@ class DbConn:
         (invoice_id SERIAL PRIMARY KEY NOT NULL,
         invoice_number VARCHAR(100) NOT NULL UNIQUE,
         invoice_status VARCHAR(100) REFERENCES status_table(status_name) ON\
-               DELETE CASCADE
+               DELETE CASCADE,
+        invoice_owner VARCHAR(250) NOT NULL,
+        package_id INTEGER REFERENCES packages(package_id) ON\
+            DELETE CASCADE
          );''')
 
     def create_packages_table(self):
@@ -72,8 +75,6 @@ class DbConn:
          recipient_address VARCHAR(250) NOT NULL,
          supplier_name VARCHAR(250) NOT NULL,
          recipient_name VARCHAR(255) REFERENCES users(username) ON\
-                     DELETE CASCADE,
-         invoice_number VARCHAR REFERENCES invoices(invoice_number) ON\
                      DELETE CASCADE,
          date_registered DATE NOT NULL DEFAULT CURRENT_DATE,
          delivery_date DATE NOT NULL,

@@ -1,5 +1,9 @@
 from flask import jsonify
 from database_handler import DbConn
+from api.validators.status_validators import StatusValidate
+
+
+status_validator = StatusValidate()
 
 class Status:
     def __init__(self):
@@ -19,7 +23,9 @@ class Status:
         self.cur.execute(sql.format(data['status_name']))
     
     def add_status(self, data):
-        if not self.check_if_status_exists(data):
-            self.create_status(data)
-            return jsonify({"message": "status added successfully"}), 201
-        return jsonify({"message": "status already exists"}), 400
+        if status_validator.validate_status(data):
+            if not self.check_if_status_exists(data):
+                self.create_status(data)
+                return jsonify({"message": "status added successfully"}), 201
+            return jsonify({"message": "status already exists"}), 400
+        return jsonify({"message": status_validator.validate_status_fields(data)})

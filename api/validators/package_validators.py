@@ -7,8 +7,8 @@ class PackageValidate:
 
     def validate_package_fields(self, data):
         # Validates package fields
-        if len(data.keys()) != 10:
-            return "Wrong number of fields, should be 10"
+        if len(data.keys()) != 8:
+            return "Wrong number of fields, should be 8"
         try:
             for field in data.keys():
                 if data[field] == "":
@@ -46,15 +46,18 @@ class PackageValidate:
         """
         validate the entire package
         """
-        if isinstance(self.validate_package_fields(data), str):
-            return self.validate_package_fields(data)
-        if isinstance(self.validate_packages_regexes(data), str):
-            return self.validate_packages_regexes(data)
-        if isinstance(self.validate_date_regex(data), str):
-            return self.validate_date_regex(data)
-        if isinstance(self.compare_dates(data), str):
-            return self.compare_dates(data)
-        return "valid package details"
+        try:
+            if isinstance(self.validate_package_fields(data), str):
+                return self.validate_package_fields(data)
+            if isinstance(self.validate_packages_regexes(data), str):
+                return self.validate_packages_regexes(data)
+            if isinstance(self.validate_date_regex(data), str):
+                return self.validate_date_regex(data)
+            if isinstance(self.compare_dates(data), str):
+                return self.compare_dates(data)
+            return "valid package details"
+        except KeyError:
+            return "Invalid key added"
 
     def validate_package_type(self, data):
         """
@@ -64,7 +67,26 @@ class PackageValidate:
             return "package_type_name cannot be blank"
         return "valid package type"
 
-    def validate_load_type(self, data):
-        if data['loading_type_name'] == "":
-            return "loading_type_name cannot be blank"
-        return "valid load type"
+    def validate_loading_type_fields(self, data):
+        # validates the loading type fields
+        try:
+            if len(data.keys())!=1:
+                return "Invalid number of keys"
+            if not data["loading_type_name"]: 
+                return "Add the loading_type_name field"
+            if self.check_load_type_fields(data):
+                return "Load type name should be pallet, roll, container or box"
+            if data['loading_type_name'] == "":
+                return "loading_type_name cannot be blank"
+            return "valid load type"
+        except KeyError:
+            return "Invalid key fields"
+
+
+    def check_load_type_fields(self, data):
+        if data['loading_type_name'].lower() != 'roll' and \
+            data['loading_type_name'].lower() != 'pallet' and \
+            data['loading_type_name'].lower() != 'box' and \
+            data['loading_type_name'].lower() != 'container':
+            return True
+        return False

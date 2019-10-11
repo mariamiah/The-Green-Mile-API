@@ -22,8 +22,9 @@ class PackageController:
         conn.create_loading_types_table()
         conn.create_users_table()
         conn.create_status_table()
-        conn.create_invoice_table()
         conn.create_packages_table()
+        conn.create_invoice_table()
+
 
     def get_user_name(self, token):
         """
@@ -37,8 +38,7 @@ class PackageController:
         tables = ['package_type', 'loading_type', 'invoices', 'status_table']
         columns = ['package_type_name', 'loading_type_name', 'invoice_number',
                    'status_name']
-        values = [data['package_type'], data['loading_type_name'],
-                  data['invoice_number'], data['delivery_status']]
+        values = [data['package_type'], data['loading_type_name']]
         for table, column, value in zip(tables, columns, values):
             sql_command = helper_controller.query_database_details(table,
                                                                    column,
@@ -54,25 +54,24 @@ class PackageController:
         """
         token = helper_controller.get_token_from_request()
         supplier_name = self.get_user_name(token)
+        delivery_status = "pending"
+
         sql = """INSERT INTO packages(package_name, package_type_name,
                                       delivery_description, loading_type_name,
                                       hub_address, recipient_address,
-                                      supplier_name, recipient_name,
-                                      invoice_number, delivery_date,
-                                       delivery_status) VALUES ('{}', '{}',
+                                      supplier_name, recipient_name, delivery_date, delivery_status) VALUES ('{}', '{}',
                                                                 '{}', '{}',
                                                                 '{}','{}',
-                                                                '{}','{}','{}',
-                                                                '{}', '{}')"""
+                                                                '{}','{}',
+                                                                '{}','{}')"""
         sql_command = sql.format(data['package_name'], data['package_type'],
                                  data['delivery_description'],
                                  data['loading_type_name'],
                                  data['hub_address'],
                                  data['recipient_address'], supplier_name,
                                  data['recipient_name'],
-                                 data['invoice_number'],
                                  data['delivery_date'],
-                                 data['delivery_status'])
+                                 delivery_status)
         self.cur.execute(sql_command)
 
     def check_if_recipient_exists(self, data):
@@ -196,7 +195,7 @@ class PackageController:
             return True
 
     def create_load_type_name(self, data):
-        is_valid = package_validate.validate_load_type(data)
+        is_valid = package_validate.validate_loading_type_fields(data)
         if is_valid == "valid load type":
             if not self.check_if_load_type_exists(data):
                 self.create_loadingtype(data)
