@@ -84,7 +84,4 @@ Test your setup using [postman](www.getpostman.com) REST-client
 ### View the API on heroku
 - [greenmileapi](https://greenmileapi.herokuapp.com)
 
-### Default Administrator credentials
-- Username : `Admin`
-- Password: `Administrator1`
 

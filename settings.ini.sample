@@ -1,0 +1,5 @@
+[settings]
+TEST_DATABASE_URL=path to the postgresql test database
+DATABASE_URL=path to the postgresql main database
+JWT_SECRET_KEY=jwt secret key to encode and decode tokens
+ADMIN_PASSWORD=your administrator password

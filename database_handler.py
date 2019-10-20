@@ -84,8 +84,8 @@ class DbConn:
 
     def create_default_admin(self):
         """Creates a default administrator """
-        hashed_password = generate_password_hash('Administrator1', 'sha256')
-        
+        default_admin_password=config("ADMIN_PASSWORD")
+        hashed_password = generate_password_hash(default_admin_password, 'sha256')
         sql = """INSERT INTO users(email, username,
                                 password, role) VALUES
             ('{}', '{}', '{}', '{}')
