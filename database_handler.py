@@ -74,8 +74,7 @@ class DbConn:
          hub_address VARCHAR(250) NOT NULL,
          recipient_address VARCHAR(250) NOT NULL,
          supplier_name VARCHAR(250) NOT NULL,
-         recipient_name VARCHAR(255) REFERENCES users(username) ON\
-                     DELETE CASCADE,
+         recipient_name VARCHAR(255),
          date_registered DATE NOT NULL DEFAULT CURRENT_DATE,
          delivery_date DATE NOT NULL,
          delivery_status VARCHAR(100) REFERENCES status_table(status_name) ON\
@@ -84,15 +83,17 @@ class DbConn:
 
     def create_default_admin(self):
         """Creates a default administrator """
-        default_admin_password=config("ADMIN_PASSWORD")
-        hashed_password = generate_password_hash(default_admin_password, 'sha256')
+        default_admin_password = config("ADMIN_PASSWORD")
+        hashed_password = generate_password_hash(
+            default_admin_password, 'sha256')
         sql = """INSERT INTO users(email, username,
                                 password, role) VALUES
             ('{}', '{}', '{}', '{}')
             ON CONFLICT(email)
             DO NOTHING;"""
-        self.cur.execute(sql.format('admin@gmail.com','Admin', hashed_password, 'Admin'))
-    
+        self.cur.execute(sql.format('admin@gmail.com',
+                                    'Admin', hashed_password, 'Admin'))
+
     def drop_tables(self, table_name):
         """ Drops the tables that exist in the database"""
         sql = """ DROP TABLE {} CASCADE; """

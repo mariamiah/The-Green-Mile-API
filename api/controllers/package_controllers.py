@@ -15,6 +15,7 @@ class PackageController:
     """
     This package controller interfaces with the database
     """
+
     def __init__(self):
         conn = DbConn()
         self.cur = conn.create_connection()
@@ -24,7 +25,6 @@ class PackageController:
         conn.create_status_table()
         conn.create_packages_table()
         conn.create_invoice_table()
-
 
     def get_user_name(self, token):
         """
@@ -86,13 +86,9 @@ class PackageController:
         package_valid = package_validate.validate_package(data)
         if package_valid == "valid package details":
             if not isinstance(self.execute_sql(data), str):
-                if self.check_if_recipient_exists(data):
-                    self.create_package(data)
-                    return jsonify(
-                        {"message": "Package created successfully"}), 201
+                self.create_package(data)
                 return jsonify(
-                    {"message":
-                     "Either user doesnot exist or not Recipient"}), 404
+                    {"message": "Package created successfully"}), 201
             return jsonify({"message": self.execute_sql(data)}), 404
         return jsonify({"message": package_valid})
 
@@ -158,14 +154,14 @@ class PackageController:
                 "delivery_status": row[12]
             })
         return package
-    
+
     def check_if_package_type_exists(self, data):
         sql = """SELECT * FROM package_type WHERE package_type_name = '{}'"""
         self.cur.execute(sql.format(data['package_type_name']))
         row = self.cur.fetchone()
         if row:
             return True
-    
+
     def create_package_type(self, data):
         sql = """INSERT INTO package_type(package_type_name)VALUES('{}')"""
         self.cur.execute(sql.format(data['package_type_name']))
@@ -178,14 +174,14 @@ class PackageController:
                 return jsonify({"message": "Package type succesfully created"}), 201
             return jsonify({"message": "Package already exists, try another"}), 400
         return jsonify({"message": is_valid}), 400
-    
+
     def create_loadingtype(self, data):
         """
         Admin adds the loading type to the system
         """
         sql = """ INSERT INTO loading_type(loading_type_name) VALUES('{}')"""
         self.cur.execute(sql.format(data['loading_type_name']))
-    
+
     def check_if_load_type_exists(self, data):
         sql = """SELECT * FROM loading_type WHERE loading_type_name = '{}'"""
         self.cur.execute(sql.format(data['loading_type_name']))
@@ -203,7 +199,7 @@ class PackageController:
             return jsonify({"message": "Load type already exists!"}), 400
         return jsonify({"message": is_valid}), 400
 
-    def modify_single_package(self, package_id, package_name, package_type, 
+    def modify_single_package(self, package_id, package_name, package_type,
                               recipient_name, loading_type_name):
         sql = """ UPDATE packages SET package_name='{}', package_type_name='{}',
                   recipient_name = '{}', loading_type_name='{}' WHERE package_id= '{}'"""
@@ -220,4 +216,3 @@ class PackageController:
                                        data['loading_type_name'])
             return jsonify({"message": "package modified successfully"}), 200
         return jsonify({"message": is_valid}), 400
-
