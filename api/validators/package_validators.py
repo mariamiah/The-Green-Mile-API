@@ -7,8 +7,8 @@ class PackageValidate:
 
     def validate_package_fields(self, data):
         # Validates package fields
-        if len(data.keys()) != 9:
-            return "Wrong number of fields, should be 9"
+        if len(data.keys()) != 11:
+            return "Wrong number of fields, should be 11"
         try:
             for field in data.keys():
                 if data[field] == "":
@@ -35,7 +35,8 @@ class PackageValidate:
 
     def compare_dates(self, data):
         date_created = datetime.datetime.now()
-        delivery_date = datetime.datetime.strptime(data['delivery_date'], "%Y-%m-%d")
+        delivery_date = datetime.datetime.strptime(
+            data['delivery_date'], "%Y-%m-%d")
         if date_created > delivery_date:
             return "delivery date should be the recent date"
 
@@ -72,9 +73,9 @@ class PackageValidate:
     def validate_loading_type_fields(self, data):
         # validates the loading type fields
         try:
-            if len(data.keys())!=1:
+            if len(data.keys()) != 1:
                 return "Invalid number of keys"
-            if not data["loading_type_name"]: 
+            if not data["loading_type_name"]:
                 return "Add the loading_type_name field"
             if self.check_load_type_fields(data):
                 return "Load type name should be pallet, roll, container or box"
@@ -84,12 +85,11 @@ class PackageValidate:
         except KeyError:
             return "Invalid key fields"
 
-
     def check_load_type_fields(self, data):
         if data['loading_type_name'].lower() != 'roll' and \
-            data['loading_type_name'].lower() != 'pallet' and \
-            data['loading_type_name'].lower() != 'box' and \
-            data['loading_type_name'].lower() != 'container':
+                data['loading_type_name'].lower() != 'pallet' and \
+                data['loading_type_name'].lower() != 'box' and \
+                data['loading_type_name'].lower() != 'container':
             return True
         return False
     

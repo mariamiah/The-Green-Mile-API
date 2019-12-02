@@ -2,13 +2,19 @@ from database_handler import DbConn
 from flask import request, jsonify
 from decouple import config
 from flask_jwt_extended import get_jwt_identity
+from api.validators.user_validators import UserValidate
 from api.validators.package_validators import PackageValidate
+from werkzeug.security import generate_password_hash, check_password_hash
 from api.controllers.helper_controllers import HelperController
+from api.controllers.user_controller import UserController
 import psycopg2
+import random
 
 
 package_validate = PackageValidate()
+validate = UserValidate()
 helper_controller = HelperController()
+user_create = UserController()
 
 
 class PackageController:
@@ -47,6 +53,25 @@ class PackageController:
             if row is None:
                 return("{} doesnot exist in {} table".format(value, table))
 
+    def create_user(self, data):
+        """
+        Creates a user
+        """
+        s = "abcdefghijklmnopqrstuvwxyz01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()?"
+        passlen = 8
+        password = "".join(random.sample(s, passlen))
+        role = "Recipient"
+
+        hashed_password = generate_password_hash(password, 'sha256')
+        sql = """INSERT INTO users(email, username, password, role)
+                        VALUES ('{}', '{}', '{}', '{}')"""
+
+        sql_command = sql.format(data['email'],
+                                 data['username'],
+                                 hashed_password,
+                                 role)
+        self.cur.execute(sql_command)
+
     def create_package(self, data):
         """
         Creates package details in the database
@@ -62,6 +87,7 @@ class PackageController:
                                                                 '{}','{}',
                                                                 '{}','{}',
                                                                 '{}','{}')"""
+
         sql_command = sql.format(data['package_name'], data['package_type'],
                                  data['delivery_description'],
                                  data['loading_type_name'],
@@ -71,6 +97,11 @@ class PackageController:
                                  data['delivery_date'],
                                  data['delivery_status'])
         self.cur.execute(sql_command)
+        query_to_check_for_inserted_package = """SELECT * FROM packages where delivery_date ='{}'"""
+        sql_command = query_to_check_for_inserted_package.format(
+            data['delivery_date'])
+        self.cur.execute(sql_command)
+        row = self.cur.fetchone()
 
     def check_if_recipient_exists(self, data):
         sql = """ SELECT * FROM users WHERE username = '{}' and role='{}'"""
@@ -82,8 +113,22 @@ class PackageController:
 
     def register_package(self, data):
         package_valid = package_validate.validate_package(data)
+
+        password_string = "abcdefghijklmnopqrstuvwxyz01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()?"
+        passlen = 8
+        password = "".join(random.sample(password_string, passlen))
+        role = "Recipient"
+
+        update_data = {
+            "email": data['email'],
+            'username': data['username'],
+            'password': password,
+            'confirm_password': password,
+            'role': role,
+        }
         if package_valid == "valid package details":
             if not isinstance(self.execute_sql(data), str):
+                user_create.register_user_controller(update_data)
                 self.create_package(data)
                 return jsonify(
                     {"message": "Package created successfully"}), 201
@@ -103,10 +148,9 @@ class PackageController:
                 "recipient_address": row[6],
                 "supplier_name": row[7],
                 "recipient_name": row[8],
-                "invoice_number": row[9],
-                "date_registered": row[10],
-                "delivery_date": row[11],
-                "delivery_status": row[12]
+                "date_registered": row[9],
+                "delivery_date": row[10],
+                "delivery_status": row[11]
             })
         return packages
 
@@ -184,7 +228,7 @@ class PackageController:
         sql = """SELECT * FROM loading_type WHERE loading_type_name = '{}'"""
         self.cur.execute(sql.format(data['loading_type_name']))
         row = self.cur.fetchone()
-        print(row)
+
         if row:
             return True
 
