@@ -52,8 +52,7 @@ class DbConn:
         self.cur.execute(''' CREATE TABLE IF NOT EXISTS invoices
         (invoice_id SERIAL PRIMARY KEY NOT NULL,
         invoice_number VARCHAR(100) NOT NULL UNIQUE,
-        invoice_status VARCHAR(100) REFERENCES status_table(status_name) ON\
-               DELETE CASCADE,
+        invoice_status VARCHAR(100) NOT NULL,
         invoice_owner VARCHAR(250) NOT NULL,
         package_id INTEGER REFERENCES packages(package_id) ON\
             DELETE CASCADE
