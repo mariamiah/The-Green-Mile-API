@@ -16,6 +16,7 @@ class UserController:
     """
     This user controller interfaces with the database
     """
+
     def __init__(self):
         conn = DbConn()
         self.cur = conn.create_connection()
@@ -111,6 +112,7 @@ class UserController:
 
     def register_user_controller(self, data):
         is_valid = validate.validate_user(data)
+
         if is_valid == "is_valid":
             if not self.check_email_exists(data['email']):
                 if not self.check_if_username_exists(data['username']):
@@ -119,6 +121,7 @@ class UserController:
                                     "user successfully created"}), 201
                 return jsonify({"message": "Username already exists"}), 400
             return jsonify({"message": "Email already exists"}), 400
+        
         return jsonify({"message": is_valid}), 400
 
     def login_controller(self, data):
@@ -133,5 +136,3 @@ class UserController:
             return jsonify({"message":
                             "Username doesnot exist, please register with Admin"}), 400
         return jsonify({"message": login_valid})
-
-

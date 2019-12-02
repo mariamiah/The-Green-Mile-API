@@ -64,7 +64,8 @@ def read_supplier_packages():
     token = helper_controller.get_token_from_request()
     username = package_controller.get_user_name(token)
     if user_controller.check_user_permission(token) == 'Supplier':
-        supplier_packages = package_controller.fetch_supplier_packages(username)
+        supplier_packages = package_controller.fetch_supplier_packages(
+            username)
         if supplier_packages:
             return jsonify({"message": supplier_packages})
         return jsonify({"message": "No created packages yet"}), 200
@@ -81,7 +82,7 @@ def fetch_single_package(id):
     if user_controller.check_user_permission(token) == 'Admin':
         single_package = package_controller.fetch_single_package(id)
         if single_package:
-            return jsonify({"package": single_package}), 200 
+            return jsonify({"package": single_package}), 200
         return jsonify({"message": "Package doesnot exist"}), 404
     return jsonify({"message": "Permission denied, should be Admin"}), 401
 
