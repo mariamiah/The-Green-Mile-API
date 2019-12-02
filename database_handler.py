@@ -77,8 +77,7 @@ class DbConn:
          recipient_name VARCHAR(255),
          date_registered DATE NOT NULL DEFAULT CURRENT_DATE,
          delivery_date DATE NOT NULL,
-         delivery_status VARCHAR(100) REFERENCES status_table(status_name) ON\
-                    DELETE CASCADE
+         delivery_status VARCHAR(100) NOT NULL
          );''')
 
     def create_default_admin(self):

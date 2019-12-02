@@ -7,8 +7,8 @@ class PackageValidate:
 
     def validate_package_fields(self, data):
         # Validates package fields
-        if len(data.keys()) != 8:
-            return "Wrong number of fields, should be 8"
+        if len(data.keys()) != 9:
+            return "Wrong number of fields, should be 9"
         try:
             for field in data.keys():
                 if data[field] == "":
@@ -55,6 +55,8 @@ class PackageValidate:
                 return self.validate_date_regex(data)
             if isinstance(self.compare_dates(data), str):
                 return self.compare_dates(data)
+            if self.validate_delivery_status(data):
+                return "Status should either be preparing for shipment, shipped or delivered"
             return "valid package details"
         except KeyError:
             return "Invalid key added"
@@ -88,5 +90,12 @@ class PackageValidate:
             data['loading_type_name'].lower() != 'pallet' and \
             data['loading_type_name'].lower() != 'box' and \
             data['loading_type_name'].lower() != 'container':
+            return True
+        return False
+    
+    def validate_delivery_status(self, data):
+        if data["delivery_status"].lower() != "preparing for shipment" and \
+            data["delivery_status"].lower() != "shipped" and \
+            data["delivery_status"].lower() != "delivered":
             return True
         return False

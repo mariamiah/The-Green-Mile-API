@@ -11,3 +11,4 @@ class Package:
         self.recipient_address = kwargs.get('recipient_address')
         self.recipient_name = kwargs.get('recipient_name')
         self.delivery_date = kwargs.get('delivery_date'),
+        self.package_status = kwargs.get('delivery_status')
