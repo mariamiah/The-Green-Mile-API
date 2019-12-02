@@ -22,7 +22,6 @@ class PackageController:
         conn.create_package_types_table()
         conn.create_loading_types_table()
         conn.create_users_table()
-        conn.create_status_table()
         conn.create_packages_table()
         conn.create_invoice_table()
 
@@ -54,7 +53,6 @@ class PackageController:
         """
         token = helper_controller.get_token_from_request()
         supplier_name = self.get_user_name(token)
-        delivery_status = "pending"
 
         sql = """INSERT INTO packages(package_name, package_type_name,
                                       delivery_description, loading_type_name,
@@ -71,7 +69,7 @@ class PackageController:
                                  data['recipient_address'], supplier_name,
                                  data['recipient_name'],
                                  data['delivery_date'],
-                                 delivery_status)
+                                 data['delivery_status'])
         self.cur.execute(sql_command)
 
     def check_if_recipient_exists(self, data):

@@ -52,8 +52,7 @@ class DbConn:
         self.cur.execute(''' CREATE TABLE IF NOT EXISTS invoices
         (invoice_id SERIAL PRIMARY KEY NOT NULL,
         invoice_number VARCHAR(100) NOT NULL UNIQUE,
-        invoice_status VARCHAR(100) REFERENCES status_table(status_name) ON\
-               DELETE CASCADE,
+        invoice_status VARCHAR(100) NOT NULL,
         invoice_owner VARCHAR(250) NOT NULL,
         package_id INTEGER REFERENCES packages(package_id) ON\
             DELETE CASCADE
@@ -77,8 +76,7 @@ class DbConn:
          recipient_name VARCHAR(255),
          date_registered DATE NOT NULL DEFAULT CURRENT_DATE,
          delivery_date DATE NOT NULL,
-         delivery_status VARCHAR(100) REFERENCES status_table(status_name) ON\
-                    DELETE CASCADE
+         delivery_status VARCHAR(100) NOT NULL
          );''')
 
     def create_default_admin(self):
