@@ -7,6 +7,7 @@ from api.validators.package_validators import PackageValidate
 from werkzeug.security import generate_password_hash, check_password_hash
 from api.controllers.helper_controllers import HelperController
 from api.controllers.user_controller import UserController
+from api.controllers.email_controller import EmailController
 import psycopg2
 import random
 
@@ -15,8 +16,7 @@ package_validate = PackageValidate()
 validate = UserValidate()
 helper_controller = HelperController()
 user_create = UserController()
-
-
+send_mail = EmailController()
 class PackageController:
     """
     This package controller interfaces with the database
@@ -130,6 +130,7 @@ class PackageController:
             if not isinstance(self.execute_sql(data), str):
                 self.create_package(data)
                 user_create.register_user_controller(update_data)
+                send_mail.send_email(data['recipient_email'])
                 return jsonify(
                     {"message": "Package created successfully"}), 201
             return jsonify({"message": self.execute_sql(data)}), 404
