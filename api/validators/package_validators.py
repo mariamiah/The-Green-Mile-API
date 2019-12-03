@@ -7,8 +7,8 @@ class PackageValidate:
 
     def validate_package_fields(self, data):
         # Validates package fields
-        if len(data.keys()) != 11:
-            return "Wrong number of fields, should be 11"
+        if len(data.keys()) != 10:
+            return "Wrong number of fields, should be 10"
         try:
             for field in data.keys():
                 if data[field] == "":
@@ -19,8 +19,7 @@ class PackageValidate:
             return "Invalid Key added"
 
     def validate_packages_regexes(self, data):
-        package_fields = ['package_name', 'hub_address',
-                          'recipient_address']
+        package_fields = ['package_name', 'hub_address']
         for field in package_fields:
             if not re.match(r"([a-zA-Z_0-9 ]*$)", data[field]):
                 return "Only alphanumerics allowed in {}".format(field)
@@ -47,20 +46,19 @@ class PackageValidate:
         """
         validate the entire package
         """
-        try:
-            if isinstance(self.validate_package_fields(data), str):
-                return self.validate_package_fields(data)
-            if isinstance(self.validate_packages_regexes(data), str):
-                return self.validate_packages_regexes(data)
-            if isinstance(self.validate_date_regex(data), str):
-                return self.validate_date_regex(data)
-            if isinstance(self.compare_dates(data), str):
-                return self.compare_dates(data)
-            if self.validate_delivery_status(data):
-                return "Status should either be preparing for shipment, shipped or delivered"
-            return "valid package details"
-        except KeyError:
-            return "Invalid key added"
+     
+        if isinstance(self.validate_package_fields(data), str):
+            return self.validate_package_fields(data)
+        if isinstance(self.validate_packages_regexes(data), str):
+            return self.validate_packages_regexes(data)
+        if isinstance(self.validate_date_regex(data), str):
+            return self.validate_date_regex(data)
+        if isinstance(self.compare_dates(data), str):
+            return self.compare_dates(data)
+        if self.validate_delivery_status(data):
+            return "Status should either be preparing for shipment, shipped or delivered"
+        return "valid package details"
+    
 
     def validate_package_type(self, data):
         """
