@@ -82,11 +82,11 @@ class PackageController:
         sql = """INSERT INTO packages(package_name, package_type_name,
                                       delivery_description, loading_type_name,
                                       hub_address, recipient_address,
-                                      supplier_name, recipient_name, delivery_date, delivery_status) VALUES ('{}', '{}',
+                                      supplier_name, recipient_name, delivery_date, delivery_status, recipient_email) VALUES ('{}', '{}',
                                                                 '{}', '{}',
                                                                 '{}','{}',
                                                                 '{}','{}',
-                                                                '{}','{}')"""
+                                                                '{}','{}', '{}')"""
 
         sql_command = sql.format(data['package_name'], data['package_type'],
                                  data['delivery_description'],
@@ -95,7 +95,7 @@ class PackageController:
                                  data['recipient_address'], supplier_name,
                                  data['recipient_name'],
                                  data['delivery_date'],
-                                 data['delivery_status'])
+                                 data['delivery_status'], data['recipient_email'])
         self.cur.execute(sql_command)
         query_to_check_for_inserted_package = """SELECT * FROM packages where delivery_date ='{}'"""
         sql_command = query_to_check_for_inserted_package.format(
@@ -120,16 +120,16 @@ class PackageController:
         role = "Recipient"
 
         update_data = {
-            "email": data['email'],
-            'username': data['username'],
+            "email": data['recipient_email'],
+            'username': data['recipient_email'].split('@')[0],
             'password': password,
             'confirm_password': password,
             'role': role,
         }
         if package_valid == "valid package details":
             if not isinstance(self.execute_sql(data), str):
-                user_create.register_user_controller(update_data)
                 self.create_package(data)
+                user_create.register_user_controller(update_data)
                 return jsonify(
                     {"message": "Package created successfully"}), 201
             return jsonify({"message": self.execute_sql(data)}), 404
