@@ -32,11 +32,12 @@ def read_all_packages():
     Displays all packages
     """
     token = helper_controller.get_token_from_request()
-    if user_controller.check_user_permission(token) == 'Admin':
+    if user_controller.check_user_permission(token) == 'Loader' or\
+            user_controller.check_user_permission(token) == 'Admin':
         all_packages = package_controller.fetch_packages()
         return jsonify({"Packages": all_packages})
     return jsonify({"message":
-                    "Only Admin can view all packages"}), 401
+                    "Only Admin or Loader can view all packages"}), 401
 
 
 @package.route('/api/v1/packages/recipient_packages', methods=['GET'])
