@@ -1,0 +1,48 @@
+Endpoint for creating a package
+---
+tags:
+  - Package
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    description: JWT token authorization
+    required: true
+  - name: body
+    in: body
+    description: Package Details
+    required: true
+    schema :
+      $ref: '#/definitions/create_package'
+definitions:
+  Package:
+    type: object
+    properties:
+      package_id:
+        type: integer
+        format: int64
+      package_name:
+        type: string
+      created_at:
+        type: string
+  create_package:
+    type: object
+    properties:
+      package_name:
+        type: string
+        example: "jeans"
+responses:
+  201:
+    description: Package created successfully
+    schema:
+      $ref: '#/definitions/Package'
+    examples:
+      [{
+        "message":"Package successfully created"
+      }]
+  400:
+    description: Enter package name
