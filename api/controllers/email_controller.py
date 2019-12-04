@@ -1,12 +1,10 @@
 import smtplib
-
-
+import os
 class EmailController:
     def send_email(self, data):
         # username = data.split('@')[0]
-        gmail_user = 'greenmileapp123@gmail.com'
-        gmail_password = 'thegreenmilers123'
-
+        gmail_user=os.environ["SENDER_MAIL"]
+        gmail_password=os.environ["SENDER_PASSWORD"]
         sent_from = gmail_user
         to = data
         subject = "(GreenMile) Details On your Package"
