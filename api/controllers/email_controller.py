@@ -1,14 +1,16 @@
 import smtplib
 import os
+
+
 class EmailController:
-    def send_email(self, data):
+    def send_email(self, data, userDetails):
         # username = data.split('@')[0]
-        gmail_user=os.environ["SENDER_MAIL"]
-        gmail_password=os.environ["SENDER_PASSWORD"]
+        gmail_user = os.environ["SENDER_MAIL"]
+        gmail_password = os.environ["SENDER_PASSWORD"]
         sent_from = gmail_user
         to = data
         subject = "(GreenMile) Details On your Package"
-        body = 'Hey'
+        body = f'Hello {userDetails[0]["username"]}\n Please Login to http://localhost:8080/ with Details\n username: {userDetails[0]["username"]} \n password: {userDetails[0]["password"]}'
 
         email_text = """\
         From: %s
@@ -18,7 +20,6 @@ class EmailController:
         %s
         """ % (sent_from, ", ".join(to), subject, body)
 
-
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(gmail_user, gmail_password)
@@ -26,6 +27,4 @@ class EmailController:
         server.close()
 
         print('Email sent!')
-    
-         
-                    
+        print(userDetails, 'userDetails')

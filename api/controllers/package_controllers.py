@@ -126,11 +126,13 @@ class PackageController:
             'confirm_password': password,
             'role': role,
         }
+        userDetails=[{'username':update_data['username'], 'password':update_data['password']}]
+
         if package_valid == "valid package details":
             if not isinstance(self.execute_sql(data), str):
                 self.create_package(data)
                 user_create.register_user_controller(update_data)
-                send_mail.send_email(data['recipient_email'])
+                send_mail.send_email(data['recipient_email'], userDetails)
                 return jsonify(
                     {"message": "Package created successfully"}), 201
             return jsonify({"message": self.execute_sql(data)}), 404
