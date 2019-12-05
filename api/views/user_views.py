@@ -30,3 +30,17 @@ def login():
     """
     data = request.get_json()
     return user_controller.login_controller(data)
+
+@user.route('/api/v1/recipients', methods=['GET'])
+@jwt_required
+def get_users():
+    """
+    Admin fetches all users
+    """
+    token = helper_controller.get_token_from_request()
+    if user_controller.check_user_permission(token) == 'Loader' or\
+            user_controller.check_user_permission(token) == 'Admin':
+        all_recipients = user_controller.get_all_recipients()
+        return jsonify({"Recipients": all_recipients})
+    return jsonify({"message":
+                    "Only Admin or Loader can view all Recipients"}), 401

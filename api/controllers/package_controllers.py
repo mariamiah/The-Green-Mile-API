@@ -10,13 +10,14 @@ from api.controllers.user_controller import UserController
 from api.controllers.email_controller import EmailController
 import psycopg2
 import random
-
+import uuid
 
 package_validate = PackageValidate()
 validate = UserValidate()
 helper_controller = HelperController()
 user_create = UserController()
 send_mail = EmailController()
+
 class PackageController:
     """
     This package controller interfaces with the database
@@ -78,15 +79,15 @@ class PackageController:
         """
         token = helper_controller.get_token_from_request()
         supplier_name = self.get_user_name(token)
-
+        package_order_number = uuid.uuid4()
         sql = """INSERT INTO packages(package_name, package_type_name,
                                       delivery_description, loading_type_name,
                                       hub_address, recipient_address,
-                                      supplier_name, recipient_name, delivery_date, delivery_status, recipient_email) VALUES ('{}', '{}',
+                                      supplier_name, recipient_name, delivery_date, delivery_status, recipient_email, package_order_number) VALUES ('{}', '{}',
                                                                 '{}', '{}',
                                                                 '{}','{}',
                                                                 '{}','{}',
-                                                                '{}','{}', '{}')"""
+                                                                '{}','{}', '{}', '{}')"""
 
         sql_command = sql.format(data['package_name'], data['package_type'],
                                  data['delivery_description'],
@@ -95,7 +96,7 @@ class PackageController:
                                  data['recipient_address'], supplier_name,
                                  data['recipient_name'],
                                  data['delivery_date'],
-                                 data['delivery_status'], data['recipient_email'])
+                                 data['delivery_status'], data['recipient_email'], package_order_number)
         self.cur.execute(sql_command)
         query_to_check_for_inserted_package = """SELECT * FROM packages where delivery_date ='{}'"""
         sql_command = query_to_check_for_inserted_package.format(
@@ -132,7 +133,7 @@ class PackageController:
             if not isinstance(self.execute_sql(data), str):
                 self.create_package(data)
                 user_create.register_user_controller(update_data)
-                send_mail.send_email(data['recipient_email'], userDetails)
+                send_mail.send_email(data, userDetails)
                 return jsonify(
                     {"message": "Package created successfully"}), 201
             return jsonify({"message": self.execute_sql(data)}), 404
@@ -153,7 +154,9 @@ class PackageController:
                 "recipient_name": row[8],
                 "date_registered": row[9],
                 "delivery_date": row[10],
-                "delivery_status": row[11]
+                "delivery_status": row[11],
+                "recipient_email": row[12],
+                "package_number": row[13]
             })
         return packages
 
@@ -193,10 +196,11 @@ class PackageController:
                 "recipient_address": row[6],
                 "supplier_name": row[7],
                 "recipient_name": row[8],
-                "invoice_number": row[9],
-                "date_registered": row[10],
-                "delivery_date": row[11],
-                "delivery_status": row[12]
+                "date_registered": row[9],
+                "delivery_date": row[10],
+                "delivery_status": row[11],
+                "recipient_email": row[12],
+                "package_number": row[13]
             })
         return package
 

@@ -77,7 +77,8 @@ class DbConn:
          date_registered DATE NOT NULL DEFAULT CURRENT_DATE,
          delivery_date DATE NOT NULL,
          delivery_status VARCHAR(100) NOT NULL,
-         recipient_email VARCHAR(100) NOT NULL
+         recipient_email VARCHAR(100) NOT NULL,
+         package_order_number VARCHAR(100) NOT NULL
          );''')
 
     def create_default_admin(self):

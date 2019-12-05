@@ -29,6 +29,7 @@ The Green-Mile is a web application that is meant for use in the door to door de
 | POST    | api/v1/invoices                 | Creates an invoice            |
 | POST    | api/v1/packages/loadingtype     | Creates the package loading type |
 | POST    | api/v1/packages/packagetype     | Creates the package type      |
+| GET     | api/v1/recipients               | Admin can view all recipients |
 
 
 

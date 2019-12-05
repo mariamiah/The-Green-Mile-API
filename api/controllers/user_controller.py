@@ -136,3 +136,16 @@ class UserController:
             return jsonify({"message":
                             "Username doesnot exist, please register with Admin"}), 400
         return jsonify({"message": login_valid})
+    
+    def get_all_recipients(self):
+        sql = """SELECT * FROM users WHERE role='Recipient' """
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+        recipients = []
+        for row in rows:
+            recipients.append({
+                "user_id": row[0],
+                "email": row[1],
+                "username": row[2],
+            })
+        return recipients

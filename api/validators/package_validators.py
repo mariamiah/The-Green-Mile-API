@@ -56,7 +56,7 @@ class PackageValidate:
         if isinstance(self.compare_dates(data), str):
             return self.compare_dates(data)
         if self.validate_delivery_status(data):
-            return "Status should either be preparing for shipment, shipped or delivered"
+            return "Status should either be prepared for shipment, shipped or delivered"
         return "valid package details"
     
 
@@ -92,7 +92,7 @@ class PackageValidate:
         return False
     
     def validate_delivery_status(self, data):
-        if data["delivery_status"].lower() != "preparing for shipment" and \
+        if data["delivery_status"].lower() != "prepared for shipment" and \
             data["delivery_status"].lower() != "shipped" and \
             data["delivery_status"].lower() != "delivered":
             return True
