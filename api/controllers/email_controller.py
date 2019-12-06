@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 import os
 
 class EmailController:
-    def send_email(self, data, userDetails):
+    def send_email(self, data, userDetails, package_order_number):
         sender_email = os.environ["SENDER_MAIL"]
         receiver_email = data["recipient_email"]
         password = os.environ["SENDER_PASSWORD"]
@@ -18,7 +18,8 @@ class EmailController:
         package = data["package_name"]
         status = data["delivery_status"]
         address = data["recipient_address"]
-        package_number = "1"
+        package_number = package_order_number
+        recipient_name = data["recipient_name"]
         if status == "delivered":
             # Create the plain-text and HTML version of your message
             text = """\
@@ -38,7 +39,7 @@ class EmailController:
                 </p>
             </body>
             </html>
-            """ %(username, status, package, package_number, address)
+            """ %(recipient_name, status, package, package_number, address)
         elif status == "prepared for shipment":
             text = """\
             Dear <b> %s </b>,
@@ -47,7 +48,7 @@ class EmailController:
             with package_number <b> %s </b>
             <br>
             is being <b> %s </b> at address %s.
-            """ %(username, package, package_number, status, address )
+            """ %(recipient_name, package, package_number, status, address )
             html = """\
             <html>
             <body>
@@ -57,13 +58,14 @@ class EmailController:
                 This is to inform you that your package <b> %s </b>
                 with package number <b> %s </b> <br> is being %s
                 at address <b> %s </b>.
-                <p>Click on the button below to track your package</p>
+                <p>Click on the button below and enter the package number provided to track this package</p>
                 <br />
+                <a href="https://the-green-mile-fe.herokuapp.com/" target="_black">
                 <button style="background-color:#2E8B57; color: white; border-radius: 1.5rem; height:40px;width:120px"> Track your package </button>
-                </p>
+                </a>
             </body>
             </html>
-            """ %(username, package, package_number, status, address)
+            """ %(recipient_name, package, package_number, status, address)
         else:
             text = """\
             Dear %s,
@@ -71,7 +73,7 @@ class EmailController:
             This is to inform you that your package <b> %s </b> with 
             package number <b> %s </b> <br>
             has been %s to address %s.
-            """ %(username, package, package_number,  status, address )
+            """ %(recipient_name, package, package_number,  status, address )
             html = """\
             <html>
             <body>
@@ -82,13 +84,14 @@ class EmailController:
                 with package number <b> %s </b>
                  <br> has been <b> %s </b>
                 to address <b> %s </b>.
-                <p>Click on the button below to track your package</p>
+                <p>Click on the button below and enter the package number provided to track this package</p>
                 <br />
+                <a href="https://the-green-mile-fe.herokuapp.com/" target="_blank">
                 <button style="background-color:#2E8B57; color: white; border-radius: 1.5rem; height:40px;width:120px"> Track your package </button>
-                </p>
+                </a>
             </body>
             </html>
-            """ %(username, package, package_number, status, address)
+            """ %(recipient_name, package, package_number, status, address)
 
 
 

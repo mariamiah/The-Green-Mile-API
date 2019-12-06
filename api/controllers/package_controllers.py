@@ -17,6 +17,7 @@ validate = UserValidate()
 helper_controller = HelperController()
 user_create = UserController()
 send_mail = EmailController()
+package_order_number = uuid.uuid4()
 
 class PackageController:
     """
@@ -73,13 +74,12 @@ class PackageController:
                                  role)
         self.cur.execute(sql_command)
 
-    def create_package(self, data):
+    def create_package(self, data, package_order_number):
         """
         Creates package details in the database
         """
         token = helper_controller.get_token_from_request()
         supplier_name = self.get_user_name(token)
-        package_order_number = uuid.uuid4()
         sql = """INSERT INTO packages(package_name, package_type_name,
                                       delivery_description, loading_type_name,
                                       hub_address, recipient_address,
@@ -114,26 +114,25 @@ class PackageController:
 
     def register_package(self, data):
         package_valid = package_validate.validate_package(data)
-
         password_string = "abcdefghijklmnopqrstuvwxyz01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()?"
         passlen = 8
         password = "".join(random.sample(password_string, passlen))
         role = "Recipient"
-
         update_data = {
             "email": data['recipient_email'],
-            'username': data['recipient_email'].split('@')[0],
-            'password': password,
-            'confirm_password': password,
-            'role': role,
+            "username": data['recipient_email'].split('@')[0],
+            "password": password,
+            "confirm_password": password,
+            "role": role
         }
-        userDetails=[{'username':update_data['username'], 'password':update_data['password']}]
 
+        userDetails=[{'username':update_data['username'], 'password':update_data['password']}]
+      
         if package_valid == "valid package details":
             if not isinstance(self.execute_sql(data), str):
-                self.create_package(data)
+                self.create_package(data, package_order_number)
                 user_create.register_user_controller(update_data)
-                send_mail.send_email(data, userDetails)
+                send_mail.send_email(data, userDetails, package_order_number)
                 return jsonify(
                     {"message": "Package created successfully"}), 201
             return jsonify({"message": self.execute_sql(data)}), 404
