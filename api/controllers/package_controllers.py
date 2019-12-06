@@ -264,3 +264,27 @@ class PackageController:
                                        data['loading_type_name'])
             return jsonify({"message": "package modified successfully"}), 200
         return jsonify({"message": is_valid}), 400
+    
+    def filter_packages(self, order_number):
+            package = []
+            sql = """ SELECT * FROM packages WHERE package_order_number = '{}'"""
+            self.cur.execute(sql.format(order_number))
+            row = self.cur.fetchone()
+            if row:
+                package.append({
+                    "package_id": row[0],
+                    "package_name": row[1],
+                    "package_type": row[2],
+                    "delivery_description": row[3],
+                    "loading_type_name": row[4],
+                    "hub_address": row[5],
+                    "recipient_address": row[6],
+                    "supplier_name": row[7],
+                    "recipient_name": row[8],
+                    "date_registered": row[9],
+                    "delivery_date": row[10],
+                    "delivery_status": row[11],
+                    "recipient_email": row[12],
+                    "package_number": row[13]
+                })
+            return jsonify({"package": package})

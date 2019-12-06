@@ -117,3 +117,8 @@ def create_loading_type():
 @package.route('/api/v1/packages/<int:id>', methods=['PUT'])
 def modify_package(id):
     return package_controller.update_single_package(id)
+
+
+@package.route('/api/v1/filter/<order_number>', methods=['GET'])
+def filter_package(order_number):
+    return package_controller.filter_packages(order_number)
