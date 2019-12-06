@@ -80,12 +80,14 @@ def fetch_single_package(id):
     Fetches a single package
     """
     token = helper_controller.get_token_from_request()
-    if user_controller.check_user_permission(token) == 'Admin':
+    if user_controller.check_user_permission(token) == 'Loader'or\
+        user_controller.check_user_permission(token) == 'Supplier'or\
+            user_controller.check_user_permission(token) == 'Admin':
         single_package = package_controller.fetch_single_package(id)
         if single_package:
             return jsonify({"package": single_package}), 200
         return jsonify({"message": "Package doesnot exist"}), 404
-    return jsonify({"message": "Permission denied, should be Admin"}), 401
+    return jsonify({"message": "Permission denied, should be Admin or Supplier or Loader"}), 401
 
 
 @package.route('/api/v1/packages/packagetype', methods=['POST'])
