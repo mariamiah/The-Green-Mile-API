@@ -25,14 +25,14 @@ class UserValidate:
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)",
                         data['email']):
             return "Invalid email format"
-        if not re.match(r"(?=^.{6,15}$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?!.*\s).*$",
+        if not re.match(r"(?=^.{5,15}$).*$",
                         data['password']):
-            return "Enter password between 6-15 values, lowercase and uppercase alphanumerics, no spaces allowed"
+            return "Enter password between 5-15 values"
 
-        if not re.match(r"([a-zA-Z0-9]*$)", data['username']):
+        if not re.match(r"([a-zA-Z0-9._-]*$)", data['username']):
             return "Only alphanumerics allowed in user name"
 
-        if re.match(r"([0-9])", data['username']):
+        if re.match(r"(^[0-9]*$)", data['username']):
             return "user name cannot contain numbers only"
 
     def validate_user_password(self, data):
