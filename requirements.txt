@@ -10,7 +10,7 @@ coveralls==1.8.2
 docopt==0.6.2
 flasgger==0.9.3
 Flask==1.1.1
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 Flask-JWT-Extended==3.23.0
 Flask-Mail==0.9.1
 gunicorn==19.9.0
